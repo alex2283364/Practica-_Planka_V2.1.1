@@ -2,6 +2,7 @@
 # Скрипт автоматического развертывания Planka и загрузки тестовых данных
 # Строго совместим с POSIX sh (dash, ash, sh)
 set -e # Останавливать выполнение при любой ошибке
+export COMPOSE_PROJECT_NAME=planka
 
 # ==============================================================================
 # БЛОК 1: ПЕРЕМЕННЫЕ И ФУНКЦИИ ЛОГИРОВАНИЯ
@@ -443,10 +444,28 @@ else
     echo "[2/7] Файл .env уже существует. Пропускаем генерацию (идемпотентность)."
 fi
 
+echo "[2.5/7] Клонирование репозитория."
+PLANKA_TAG="2.1.1"
+PLANKA_REPO="https://github.com/plankanban/planka.git"
+
+if [ ! -d "client" ] || [ ! -d "server" ]; then
+    echo "Клонирование исходников Planka $PLANKA_TAG..."
+    TEMP_DIR=$(mktemp -d)
+    git clone --branch "$PLANKA_TAG" --depth 1 "$PLANKA_REPO" "$TEMP_DIR/planka-src"
+
+    # Копируем всё, кроме .git, docker-compose.yml, Dockerfile
+    rsync -av --exclude='.git' --exclude='docker-compose.yml' --exclude='Dockerfile' "$TEMP_DIR/planka-src/" ./
+
+    rm -rf "$TEMP_DIR"
+    echo "Исходный код Planka $PLANKA_TAG успешно скопирован."
+else
+    echo "Исходный код Planka уже присутствует. Пропуск клонирования (идемпотентность)."
+fi
 # -----------------------------------------------------------------------------
 # 3. Сборка образов
 # -----------------------------------------------------------------------------
 echo "[3/7] Сборка образов (docker compose build)..."
+
 docker compose build
 
 # -----------------------------------------------------------------------------
