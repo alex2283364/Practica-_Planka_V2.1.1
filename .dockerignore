@@ -1,0 +1,254 @@
+# ============================================================================
+# Docker Build Context Exclusions
+# ============================================================================
+# This file reduces build context size by excluding unnecessary files
+# Smaller context = faster builds and reduced memory usage
+# ============================================================================
+
+# =============================================================================
+# SYSTEM FILES (always exclude)
+# =============================================================================
+
+# macOS metadata
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+*.swp
+*.swo
+*~
+
+# Linux editor backups
+**/*~
+**/.vscode
+**/.idea
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# =============================================================================
+# VERSION CONTROL (not needed in container)
+# =============================================================================
+
+.git
+.gitignore
+.gitattributes
+.github
+.gitlab-ci.yml
+.travis.yml
+
+# =============================================================================
+# BUILD ARTIFACTS AND CACHES (Stage 1-2 outputs, not needed in context)
+# =============================================================================
+
+# Node.js
+*/node_modules
+npm-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+
+# Build outputs (these are generated during build, not needed in context)
+server/dist
+server/.tmp
+server/logs
+server/test
+server/swagger.json
+
+client/dist
+
+# Package manager lockfiles versions (npm ci uses the one in container)
+package-lock.json.bak
+
+# =============================================================================
+# ENVIRONMENT AND CONFIGURATION (context-specific, not in container)
+# =============================================================================
+
+# Environment files (loaded from volume or secrets)
+.env
+.env.local
+.env.*.local
+.env.*.swp
+
+# Local config
+server/.env
+server/.env.local
+.npmrc.local
+
+# Development configs
+server/.sailsrc.local
+server/nodemon.json.local
+
+# =============================================================================
+# DATA AND PERSISTENCE (separate from source)
+# =============================================================================
+
+# Database data (persisted in volume)
+server/data/*
+!server/data/.gitkeep
+
+# Redis data
+redis_data/
+postgres_data/
+
+# Log files
+server/logs/*
+!server/logs/.gitkeep
+logs/
+*.log
+
+# =============================================================================
+# DEVELOPMENT DEPENDENCIES (not needed in container)
+# =============================================================================
+
+# Documentation
+docs/
+README.md
+CONTRIBUTING.md
+CHANGELOG.md
+
+# Testing
+server/test
+server/.mocha*
+coverage/
+.nyc_output
+*.coverage
+
+# Examples
+examples/
+sample/
+
+# TypeScript
+*.ts
+tsconfig*.json
+.tscache
+
+# =============================================================================
+# DOCUMENTATION AND METADATA (not needed in container)
+# =============================================================================
+
+# Markdown files
+*.md
+LICENSE*
+LICENSES/*
+!LICENSES/PLANKA\ Community\ License\ DE.md
+
+# Docker files (only Dockerfile is used, rest excluded)
+docker-compose*.yml
+docker-compose.override.yml
+Dockerfile.dev
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+
+# =============================================================================
+# LANGUAGE-SPECIFIC ARTIFACTS
+# =============================================================================
+
+# Python
+*.pyc
+__pycache__/
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+env/
+
+# Ruby
+*.gem
+.ruby-version
+
+# Java
+*.class
+*.jar
+
+# =============================================================================
+# DOCKER-SPECIFIC EXCLUSIONS
+# =============================================================================
+
+# Docker files not needed during build
+docker-compose*.override.yml
+.dockerignore
+
+# Docker volumes and data
+volumes/
+
+# =============================================================================
+# LARGE FILES AND ARCHIVES (reduce context size)
+# =============================================================================
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Backups
+*.bak
+*.backup
+backup/
+
+# =============================================================================
+# OPTIONAL: Development-specific (uncomment if needed)
+# =============================================================================
+
+# Linting configs
+.eslintignore.bak
+.prettierignore.bak
+
+# IDE specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Shell scripts (if versioning outside container)
+scripts/
+
+# Asset source files (if using optimization)
+assets/
+
+# =============================================================================
+# SUMMARY
+# ============================================================================
+# Files INCLUDED in build context:
+#   - Dockerfile
+#   - .dockerignore
+#   - server/
+#     - src/ (source code)
+#     - package*.json (manifests)
+#     - start.sh (entrypoint)
+#     - healthcheck.js
+#     - requirements.txt
+#     - build.js
+#     - app.js
+#     - public/index.ejs
+#     - views/
+#   - client/
+#     - src/ (source code)
+#     - package*.json
+#     - public/
+#   - LICENSE.md
+#   - LICENSES/PLANKA\ Community\ License\ DE.md
+#
+# Files EXCLUDED from build context:
+#   - .git* files
+#   - node_modules (rebuilt during build)
+#   - dist/ directories (rebuilt during build)
+#   - .env files (context-specific)
+#   - logs/ (not part of source)
+#   - test/ files (not needed in production)
+#   - *.md docs (not needed in container)
+#   - Development dependencies
+# ============================================================================
