@@ -1,9 +1,11 @@
+name: planka
+
 services:
   # =========================================================================
   # PLANKA APPLICATION (LOCAL BUILD)
   # =========================================================================
   planka:
-    #image: ghcr.io/plankanban/planka:latest
+
     build: .
     container_name: planka
     restart: unless-stopped

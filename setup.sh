@@ -454,7 +454,7 @@ if [ ! -d "client" ] || [ ! -d "server" ]; then
     git clone --branch "$PLANKA_TAG" --depth 1 "$PLANKA_REPO" "$TEMP_DIR/planka-src"
 
     # Копируем всё, кроме .git, docker-compose.yml, Dockerfile
-    rsync -av --exclude='.git' --exclude='docker-compose.yml' --exclude='Dockerfile' "$TEMP_DIR/planka-src/" ./
+    rsync -av --exclude='.git' --exclude='docker-compose.yml' --exclude='README.md' --exclude='.gitignore' --exclude='.github' --exclude='Dockerfile' "$TEMP_DIR/planka-src/" ./
 
     rm -rf "$TEMP_DIR"
     echo "Исходный код Planka $PLANKA_TAG успешно скопирован."
