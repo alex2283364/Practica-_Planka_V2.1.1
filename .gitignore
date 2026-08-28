@@ -18,3 +18,4 @@ yarn.lock
 
 # Chart dependencies
 **/charts/*.tgz
+nginx/logs/

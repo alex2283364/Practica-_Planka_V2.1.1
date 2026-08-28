@@ -21,3 +21,38 @@ scrape_configs:
         target_label: 'service'
       - source_labels: ['__meta_docker_container_label_com_docker_compose_project']
         target_label: 'project'
+  - job_name: nginx
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx
+          __path__: /var/log/nginx/access.log
+    pipeline_stages:
+      # 1. Парсим JSON из строки лога
+      - json:
+          expressions:
+            status: status
+            request_time: request_time
+            request_uri: request_uri
+            request_method: request_method
+            remote_addr: remote_addr
+      # 2. Превращаем поля в метки (labels)
+      - labels:
+          status: status
+          request_uri: request_uri
+          request_method: request_method
+      # 3. Создаём метрики на основе полей
+      - metrics:
+          nginx_requests_total:
+            type: Counter
+            description: "Total HTTP requests"
+            source: status
+            config:
+              action: inc
+          nginx_request_duration_seconds:
+            type: Histogram
+            description: "Request duration in seconds"
+            source: request_time
+            config:
+              buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
