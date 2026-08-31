@@ -410,10 +410,10 @@ if [ ! -f "$ENV_FILE" ]; then
     REDIS_PASSWORD=$(openssl rand -hex 16)
     cat <<EOF > "$ENV_FILE"
 PLANKA_PORT=3000
-BASE_URL=http://localhost:3000
+BASE_URL=http://localhost
 SECRET_KEY=$SECRET_KEY
 LOG_LEVEL=info
-TRUST_PROXY=false
+TRUST_PROXY=true
 POSTGRES_IMAGE=postgres:16-alpine
 POSTGRES_DB=planka
 POSTGRES_USER=postgres
@@ -528,7 +528,7 @@ HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:$APP_PORT" 
 echo "=========================================="
 echo "РАЗВЕРТЫВАНИЕ ЗАВЕРШЕНО!"
 echo "=========================================="
-echo "Адрес приложения: http://localhost:$APP_PORT"
+echo "Адрес приложения: http://localhost"
 echo "Статус проверки (HTTP): $HTTP_CODE"
 
 if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ] || [ "$HTTP_CODE" = "401" ]; then
